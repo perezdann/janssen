@@ -18,7 +18,7 @@ use Janssen\Helpers\Response\ErrorResponse;
 use Janssen\Helpers\Response\JsonResponse;
 use Janssen\Helpers\Response\RawResponse;
 use Janssen\Helpers\FlashMessage;
-use Janssen\Resource\DefaultResolver;
+use Janssen\Resource\ClassResolver;
 use Throwable;
 
 class App
@@ -71,7 +71,7 @@ class App
         $ca_candidate = self::getPathCandidate('aliases');
         $external_aliases = (is_file($ca_candidate)) ? (include $ca_candidate) : [];
         if(!empty($external_aliases))
-            DefaultResolver::append($external_aliases);
+            ClassResolver::append($external_aliases);
 
         // make the global functions mapped to aliases to be called
         // from everywhere in the app
@@ -171,7 +171,7 @@ class App
                      * of Janssen\Response
                      */
                     $page = $action[0];
-                    $renderer = DefaultResolver::resolve($action[1]);
+                    $renderer = ClassResolver::resolve($action[1]);
                     if($renderer && $renderer instanceof Response){
                         $res = $renderer->render(['filename' => $page]);
                     } else
@@ -273,7 +273,7 @@ class App
         $dc = self::getConfig('connections')[self::getConfig('default_connection')];
         $dbe = $dc['driver'];
         if ($dbe) {
-            $adaptor = DefaultResolver::resolve($dbe);
+            $adaptor = ClassResolver::resolve($dbe);
             if ($adaptor && $adaptor instanceof Adaptor){ 
                 $cf = $adaptor->getAllConfigFields();
                 foreach ($cf as $k => $v) {
@@ -369,6 +369,7 @@ class App
             // its own
             ($response->hasHeaders())?$response->addHeader($this->header):$response->setHeader($this->header);
             $ret = $response;
+
         } elseif ($response instanceof Exception) {
             $er = new ErrorResponse();
             $http_code = $response->isHttpCode() ? $response->getCode() : 500;
@@ -377,13 +378,14 @@ class App
                 ->setException($response)
                 ->setHeader($this->header);
             $ret = $er;
-            //throw $response;
+            
         } else {
             // response is not instance of Response, we'll make a new one
             $o = (is_array($response) || self::$request->expectsJSON())?(new JsonResponse):(new RawResponse);
             $o->setContent($response)
                 ->setHeader($this->header);
             $ret = $o;
+
         }
 
         // here we should make the postprocessing if applyable
@@ -425,7 +427,7 @@ class App
 
     public static function url()
     {
-        //$url = self::getConfig('url');
+
         $url = Request::getURI();
         return $url;
     }

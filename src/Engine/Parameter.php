@@ -18,7 +18,7 @@ class Parameter implements \Countable
         ['>', '&gt;'],
     ];
 
-    public function __construct(Array $init_vals = null)
+    public function __construct(Array $init_vals = [])
     {
         if($init_vals){
             foreach($init_vals as $k=>$v){
@@ -80,7 +80,10 @@ class Parameter implements \Countable
             $r = "'" . intval($member) . "'";
         elseif(empty($member) && $member !== '0')
             $r  = ($this->empty_treatment == 'null') ? 'null' : $member;
-        else{
+        elseif(is_array($member)){
+            $jc = Config::get('json_encode_options', 0);
+            $r  = "'" . json_encode($member, $jc) . "'";
+        }else{
             $v = $this->members[$name];
             if(is_numeric($v) || is_bool($v))
                 $mc = ($this->process_value) ? $this->processNumericValue($v) : $v;    
@@ -188,7 +191,7 @@ class Parameter implements \Countable
      * $fields must be a comma separated list of the paramters to get.
      * 
      */
-    public function stringify(String $fields = null, $delimiter = ',')
+    public function stringify(String $fields = "", $delimiter = ',')
     {
         $ar_f = explode(",", $fields);
 
@@ -232,7 +235,7 @@ class Parameter implements \Countable
         return $ret;
     }
 
-    public function updatefy(String $fields = null, $delimiter = ',', $ignore_absents = false)
+    public function updatefy(String $fields = "", $delimiter = ',', $ignore_absents = false)
     {
         $ar_f = explode(",", $fields);
 
@@ -247,7 +250,7 @@ class Parameter implements \Countable
      * 
      * @return object
      */
-    public function TreatBlanksAsNull()
+    public function treatBlanksAsNull()
     {
         $this->empty_treatment = 'null';
         return $this;
@@ -261,7 +264,6 @@ class Parameter implements \Countable
         $this->empty_treatment = 'quote';
         return $this;
     }
-
 
     /**
      * Process value to substitute values before send to string
