@@ -26,7 +26,7 @@ abstract class Event
         $event = strtolower($event);
         
         if(!self::exists($event)){
-            throw new Exception("This event is not available");
+            throw new Exception("This event is not available", 500);
         }
 
         self::$callables[$event][] = $callable;
@@ -54,7 +54,7 @@ abstract class Event
         $event = strtolower($event);
 
         if(!self::exists($event)){
-            throw new Exception("This event is not available");
+            throw new Exception("This event is not available", 500);
         }        
 
         foreach(self::$callables[$event] as $k=>$callable){
