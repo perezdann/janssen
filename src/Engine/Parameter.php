@@ -50,8 +50,8 @@ class Parameter implements \Countable
     /**
      * Returns a member of parameter
      *
-     * @param String $name
-     * @param String $default
+     * @param string $name
+     * @param string $default
      * @return mixed
      */
     public function getMember($name, $default = '')
@@ -65,7 +65,7 @@ class Parameter implements \Countable
      * @param string $name
      * @return void
      */
-    public function __get(String $name)
+    public function __get(string $name)
     {
         return $this->getMember($name, null);
     }
@@ -101,7 +101,7 @@ class Parameter implements \Countable
      * if value is quotable and returns the value with its quotes
      * or not, or null.
      *
-     * @return String
+     * @return string
      */
     public function getQueryableOrNull($name)
     {
@@ -142,7 +142,7 @@ class Parameter implements \Countable
      * @param string $name
      * @param any $value
      */
-    public function __set(String $name, $value)
+    public function __set(string $name, $value)
     {
         return $this->setMember($name, $value);
     }
@@ -191,7 +191,7 @@ class Parameter implements \Countable
      * $fields must be a comma separated list of the paramters to get.
      * 
      */
-    public function stringify(String $fields = "", $delimiter = ',')
+    public function stringify(string $fields = '', $delimiter = ',')
     {
         $ar_f = explode(",", $fields);
 
@@ -235,7 +235,7 @@ class Parameter implements \Countable
         return $ret;
     }
 
-    public function updatefy(String $fields = "", $delimiter = ',', $ignore_absents = false)
+    public function updatefy(string $fields = '', $delimiter = ',', $ignore_absents = false)
     {
         $ar_f = explode(",", $fields);
 
