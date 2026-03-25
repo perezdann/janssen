@@ -30,13 +30,13 @@ class Route
     {
         self::$routes = $routes;
         // try to get the route from path
-        self::getByPath(Request::getPath());
+        self::getByPath(Request::getFullPath());
     }
 
     public static function getByPath($path)
     {
         // find a exclusive route, the first check will be returned
-        $pd = Request::getPretendedHost();
+        $pd = Request::getPretendedSubdomain();
         $i = self::findByPath($path, 0, $pd);
         
         if($i !== FALSE && !empty(self::$routes[$i])){
@@ -135,7 +135,7 @@ class Route
      * route when user doesn't provide a route name
      * 
      */
-    private static function findByPath($path, $offset = 0, $host = '')
+    private static function findByPath($path, $offset = 0, $subdomain = '')
     {
         $found = $ret = false;
 
@@ -149,7 +149,7 @@ class Route
             if(!self::isWellFormed($v))
                 throw new Exception('Error in route', 500);
 
-            if(isset($v['domain']) && !empty($host) && $v['domain'] !== $host)
+            if(isset($v['domain']) && !empty($subdomain) && $v['domain'] !== $subdomain)
                 continue;
 
             // take each bracketed sentence in $v and transform it
@@ -164,7 +164,7 @@ class Route
                 $found = ($r > 0);
             }else{
                 // make direct match
-                $found = ($v[0] === $path);
+                $found = (($v[0] ?? '') === $path);
             }
             
             if($found){
@@ -237,14 +237,15 @@ class Route
             // if dest starts with slash means its a path
             $ddst = substr($dst, 1);
             $uri = Request::getURI();
-            if(strtolower($uri) == 'http' && Config::get('force_https', true)){
+            $proto = Request::getProtocol();
+            if(strtolower($proto) == 'http' && Config::get('force_https', true)){
                 $uri = str_replace('http://', 'https://', $uri);
             }
             return $uri . $ddst;
         }else{
             // if dest doesn't start with slash means its a named path
             /**  @todo this feature is pending!! */
-            throw new Exception('Named routes are not implemented yet! Please use a path starting with \'/\'');
+            throw new Exception('Named routes are not implemented yet! Please use a path starting with \'/\'', 500);
         }
     }
 

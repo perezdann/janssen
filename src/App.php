@@ -93,6 +93,10 @@ class App
         // start session
         Session::start();
         
+        // fix path if engine needed
+        if(self::$engine_config['relax_route'])
+            Request::fixPath();
+        
         // the only way to know what user want? the request
         Request::fill();
         
@@ -101,10 +105,6 @@ class App
         
         // load previous messages from session
         FlashMessage::bulkLoadFromSession();
-        
-        // fix path if engine needed
-        if(self::$engine_config['relax_route'])
-            self::$request::fixPath();
         
         // instanciate database if setted up
         $this->load_database_connection();
@@ -132,6 +132,12 @@ class App
                 $routes_conf_candidate = self::getPathCandidate('routes');
                 $routes = (is_file($routes_conf_candidate)) ? (include $routes_conf_candidate) : [];
                 Route::setRoutes($routes);
+                
+                $current_route = Route::getCurrent();
+                if(empty($current_route))
+                    throw new Exception('Route not set', 404);
+                
+                Request::setMatchedRoute($current_route);
             }
 
             // run preprocessor, we expect a preprocessor to answer true, if
@@ -145,13 +151,12 @@ class App
             // if request method is GET, we'll use the routes.
             // if request method is POST, PUT or DELETE we will take the route from encrypted post
             if ($rm == 'GET') {
-                $path = self::$request->getPath();
                 $route = Route::getCurrent();
-                if(empty($route))
-                    $route = Route::getByPath($path);
+                //$route = Route::getByPath($path);
                 $action = $route['resolver'];
-
+                
                 // extract parameters from path
+                $path = self::$request->getFullPath();
                 $parameters = Route::getParameters($path);
                 foreach ($parameters as $name => $value) {
                     self::$request->registerParameter($name, $value);

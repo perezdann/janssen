@@ -23,9 +23,10 @@ abstract class Event
     
     public static function listen(string $event, callable $callable)
     {
+        $event = strtolower($event);
         
         if(!self::exists($event)){
-            throw new Exception("This event is not available");
+            throw new Exception("This event is not available", 500);
         }
 
         $event = strtolower($event);
@@ -53,7 +54,7 @@ abstract class Event
     {
         
         if(!self::exists($event)){
-            throw new Exception("This event is not available");
+            throw new Exception("This event is not available", 500);
         }        
 
         $event = strtolower($event);
