@@ -235,13 +235,12 @@ class Route
         $dst = trim($dst);
         if(substr($dst, 0,1) == '/'){
             // if dest starts with slash means its a path
-            $ddst = substr($dst, 1);
             $uri = Request::getURI();
             $proto = Request::getProtocol();
             if(strtolower($proto) == 'http' && Config::get('force_https', true)){
                 $uri = str_replace('http://', 'https://', $uri);
             }
-            return $uri . $ddst;
+            return $uri . $dst;
         }else{
             // if dest doesn't start with slash means its a named path
             /**  @todo this feature is pending!! */
