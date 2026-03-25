@@ -48,7 +48,7 @@ class Request
     /**
      * The referrer of the request
     *
-    * @var String
+    * @var string
     */
     private static $from;
     
@@ -109,21 +109,21 @@ class Request
     /**
      * Guard who autorizes this request
      *
-     * @var String
+     * @var string
      */    
     private static $authorized_by = '';
 
     /**
      * The current route
      * 
-     * @var Array
+     * @var array
      */
     private static $current_route;
 
     /**
      * The pretended host in the route
      * 
-     * @var String
+     * @var string
      */
     private static $pretended_host = '';
 
@@ -167,11 +167,11 @@ class Request
         }
         
         // fill Uri and payload
-        $domain = Config::get('domain');
-        if(is_null($domain))
-            throw new Exception('Domain setting not set. We need this setting to continue', 500, 'Contact administrator to fix this issue');
+        $url = Config::get('url');
+        if(is_null($url))
+            throw new Exception('Url setting not set in config. We need this setting to continue', 500, 'Contact administrator to fix this issue');
 
-        self::$url = new URL(self::getFullUrl(), $domain, self::$fix_path);        
+        self::$url = new URL(self::getFullUrl(), $url, self::$fix_path);        
         // fill back
         self::calculateFrom();
         // expecting json?
@@ -185,7 +185,7 @@ class Request
     /**
      * Sets the guards that can approve a request
      *
-     * @param Array $guards
+     * @param array $guards
      * @return void
      */
     public static function setIntendedGuards($guards)
@@ -197,7 +197,7 @@ class Request
      * Returns all the guards that were set up to approve a given
      * request
      *
-     * @return Array
+     * @return array
      */
     public static function getIntendedGuards()
     {
@@ -220,7 +220,7 @@ class Request
     /**
      * Returns the Guard for this request
      *
-     * @return Array
+     * @return array
      */
     /*
     public static function getGuards()
@@ -232,7 +232,7 @@ class Request
     /**
      * Saves the name of guard who autorized the request
      *
-     * @param String $guard_name        
+     * @param string $guard_name        
      * @return void
      */ 
     public static function authorizedBy($guard_name)
@@ -243,7 +243,7 @@ class Request
     /**
      * Returns the guard who authorizes the request
      *
-     * @return String
+     * @return string
      */
     public static function whoAuthorizes()
     {
@@ -253,7 +253,7 @@ class Request
     /**
      * Returns true if the request was made to a domain false if IP address
      *
-     * @return String
+     * @return string
      */
     public static function isValidDomain()
     {
@@ -293,7 +293,7 @@ class Request
     /**
      * Returns the action called by user
      *
-     * @return Array
+     * @return array
      */
     public static function getUserAction()
     {
@@ -317,7 +317,7 @@ class Request
     /**
      * Indicates if a bag is valid to use
      *
-     * @param String $name
+     * @param string $name
      * @return boolean
      */
     public static function isValidBag($name)
@@ -329,8 +329,8 @@ class Request
      /**
      * Returns all bag contents of all bags
      *
-     * @param String $bag
-     * @return Array
+     * @param string $bag
+     * @return array
      */
     public static function all($bag = null){
         if(is_null($bag))
@@ -346,8 +346,8 @@ class Request
     /**
      * Gets a variable from $_SERVER
      *
-     * @param String $name
-     * @return String|null
+     * @param string $name
+     * @return string|null
      */
     public static function server($name){
         return isset(self::$bags['SERVER'][$name])?self::$bags['SERVER'][$name]:null;
@@ -356,8 +356,8 @@ class Request
     /**
      * Gets a variable from HTTP Request headers
      *
-     * @param String $name
-     * @return String|null
+     * @param string $name
+     * @return string|null
      */    
     public static function header($name, $default = null){
         $name = strtolower($name);
@@ -369,9 +369,9 @@ class Request
      * 
      * Not intended for app use. Use instead parameter::post
      *
-     * @param String $name
-     * @param String $default
-     * @return String|$default
+     * @param string $name
+     * @param string $default
+     * @return string|null
      */
     public static function post($name, $default = null){
         return isset(self::$bags['POST'][$name])?self::$bags['POST'][$name]:$default;
@@ -380,8 +380,8 @@ class Request
     /**
      * Allos to alter a post value or add a new one
      *
-     * @param String $name
-     * @param String $value
+     * @param string $name
+     * @param string $value
      * @return void
      */
     public static function alterPost($name, $value = null)
@@ -394,9 +394,9 @@ class Request
      * 
      * Not intended for app use. Use instead parameter::get
      *
-     * @param String $name
-     * @param String $default
-     * @return String|$default
+     * @param string $name
+     * @param string $default
+     * @return string|null
      */
     public static function get($name, $default = null){
         return isset(self::$bags['GET'][$name])?self::$bags['GET'][$name]:$default;
@@ -405,8 +405,8 @@ class Request
     /**
      * Gets a variable from $_FILES
      *
-     * @param String $name
-     * @return String|null
+     * @param string $name
+     * @return string|null
      */
     public static function file($name){
         $f = isset(self::$bags['FILES'][$name])?self::$bags['FILES'][$name]:false;
@@ -419,9 +419,9 @@ class Request
     /**
      * Gets a parameter from parameters bag
      *
-     * @param String $name
-     * @param String $default
-     * @return String|$default
+     * @param string $name
+     * @param string $default
+     * @return string|null
      */    
     public static function parameter($name, $default = null){
         return self::$_parameters->getMember($name, $default);
@@ -440,8 +440,8 @@ class Request
     /** 
      * Add value to parametes bag
      * 
-     * @param String $name
-     * @param String|Integer|Boolean $value
+     * @param string $name
+     * @param string|integer|boolean $value
      * @return Object
      */
     public static function registerParameter($name, $value)
@@ -453,7 +453,7 @@ class Request
     /**
      * Returns the full mapping used to validate the request
      *
-     * @return Array
+     * @return array
      */
     public static function mapping()
     {
@@ -465,7 +465,7 @@ class Request
      * the parameters object
      *
      * @param Mapper $mapper
-     * @param String $bag
+     * @param string $bag
      * @return Object
      */
     public static function map(Mapper $mapper, $bag = 'post')
@@ -492,7 +492,7 @@ class Request
     /**
      * Return all the parameter fields mapped
      *
-     * @return Array
+     * @return array
      */
     public static function getMapped()
     {
@@ -605,7 +605,7 @@ class Request
     }
 
     /**
-     * @return Array
+     * @return array
      */
     public static function getMatchedRoute()
     {
@@ -615,7 +615,7 @@ class Request
     /**
      * Returns the previous path or referrer
      *
-     * @return String
+     * @return string
      */
     public static function getPrevious()
     {
@@ -625,7 +625,7 @@ class Request
     /**
      * Returns the subdomain in case it exists
      *
-     * @return String
+     * @return string
      */
     public static function getPretendedSubdomain()
     {
@@ -635,7 +635,7 @@ class Request
     /**
      * Returns the host
      *
-     * @return String
+     * @return string
      */
     public static function getPretendedHost()
     {
@@ -645,7 +645,7 @@ class Request
     /**
      * Alias method for getPrevious()
      *
-     * @return String
+     * @return string
      */
     public static function back()
     {
@@ -656,7 +656,7 @@ class Request
      * Returns the base URI calculated from request
      * It should be the base URL of web page
      *
-     * @return String
+     * @return string
      */
     public static function getURI()
     {
@@ -789,8 +789,8 @@ class URL
     /**
      * Removes the / from the given text
      *
-     * @param String $text
-     * @return String
+     * @param string $text
+     * @return string
      */
     private static function fix($text){
         if(!in_array($text, ['','/']) && substr($text, -1) =='/')
