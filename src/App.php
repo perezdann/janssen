@@ -474,7 +474,7 @@ class App
         // if the redirect url starts with '/' we'll assume
         // the user is redirecting to a internal route. 
         if(substr($to, 0,1) == '/')
-            $to = self::$request->getURI() . substr($to,1);
+            $to = self::$request->getURI() . $to;
 
         $h = new Header;
         $h->setMessage("Location: " . $to, 302, true);

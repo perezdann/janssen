@@ -42,9 +42,15 @@ class Config
 
         if(file_exists("$path.env")){
             try{
-                $dotenv = \Dotenv\Dotenv::create($path);
+                // Soporta phpdotenv v4 (Dotenv::create(string)) y v5
+                // (Dotenv::create(RepositoryInterface, paths))
+                if (method_exists(\Dotenv\Dotenv::class, 'createUnsafeImmutable')) {
+                    $dotenv = \Dotenv\Dotenv::createUnsafeImmutable($path);
+                } else {
+                    $dotenv = \Dotenv\Dotenv::create($path);
+                }
                 $dotenv->load();
-            }catch(Exception $e){
+            }catch(\Throwable $e){
                 throw new Exception('You need to use Dotenv if you want to load .env files!');
             }
         }
